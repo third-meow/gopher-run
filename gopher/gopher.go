@@ -43,7 +43,8 @@ func (g *Gopher) Setup(renderer *sdl.Renderer, x, y, speed float64) {
 
 //update position rectagle
 func (g *Gopher) updatePosRect() {
-	g.posRect = &sdl.Rect{X: g.pos[0], Y: g.pos[1], W: g.width, H: g.height}
+	//						scale down by 0.5x     vvvv           vvvv
+	g.posRect = &sdl.Rect{X: int32(g.pos[0]), Y: int32(g.pos[1]), W: g.width / 2, H: g.height / 2}
 }
 
 //limit acceleration
