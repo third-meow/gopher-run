@@ -1,8 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"github.com/veandco/go-sdl2/sdl"
+	//"gopher-run/block"
+	"gopher-run/gopher"
+	//"gopher-run/possessed"
 )
 
 const (
@@ -10,42 +12,63 @@ const (
 	SCREEN_STARTPOINT_Y = sdl.WINDOWPOS_UNDEFINED
 	SCREEN_HEIGHT       = 720
 	SCREEN_WIDTH        = 720
+
+	ENEMY_N = 5
+	BLOCK_N = 9
 )
 
-//renderer and window is global
+//sdl renderer and window
 var renderer *sdl.Renderer
 var window *sdl.Window
+
+//in-game entitys
+var player *gopher.Gopher
+
+//var enemies []*possessed.PossessedGopher
+//var blocks []*block.Block
 
 //checks and handles errors
 func errCheck(err error) {
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 }
 
+func setupEntitys() {
+
+	player = &gopher.Gopher{}
+	player.Setup(renderer, (SCREEN_WIDTH / 2), (SCREEN_HEIGHT / 2), 3)
+	//enemies = make([]possessed.PossessedGopher, ENEMY_N)
+	//blocks= make([]block.Block, BLOCK_N)
+
+}
+
 func updateAll() {
-	return
+	player.Update(sdl.GetKeyboardState())
 }
 
 //draws everything
 func drawAll() {
 	//draw background
-	renderer.SetDrawColor(0, 5, 0, 30)
+	renderer.SetDrawColor(0, 0, 0, 0)
 	renderer.Clear()
+
+	//draw player
+	renderer.Copy(player.GetDrawData())
 
 	//present changes
 	renderer.Present()
 }
 
 //iniyializes everything
-func initializeAll() {
+func initializeApplication() {
 	//initialize sdl
 	err := sdl.Init(sdl.INIT_EVERYTHING)
 	errCheck(err)
 
 	//create window
 	window, err = sdl.CreateWindow(
-		"A Game I Guess",
+		"Gopher-Run",
 		SCREEN_STARTPOINT_X,
 		SCREEN_STARTPOINT_Y,
 		SCREEN_WIDTH,
@@ -64,8 +87,11 @@ func destroyAll() {
 }
 
 func main() {
-	initializeAll()
+	initializeApplication()
 	defer destroyAll()
+
+	//setup in-game entitys
+	setupEntitys()
 
 	//game loop
 	for {
