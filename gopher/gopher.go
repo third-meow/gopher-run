@@ -5,30 +5,23 @@ import (
 	"gopher-run/loadImgTool"
 )
 
-const (
-	SCAN_H = 43
-	SCAN_J = 44
-	SCAN_K = 45
-	SCAN_L = 46
-)
-
 //addes b to a (a[n] += b[n] to all elements)
-func apply(a, b *[2]int32) {
+func apply(a, b *[2]float64) {
 	for i := 0; i < len(*a); i += 1 {
 		(*a)[i] += (*b)[i]
 	}
 }
 
 type Gopher struct {
-	pos, acl         [2]int32
-	speed            int32
+	pos, acl         [2]float64
+	speed            float64
 	height, width    int32
 	srcRect, posRect *sdl.Rect
 	tex              *sdl.Texture
 }
 
 //setup gopher
-func (g *Gopher) Setup(renderer *sdl.Renderer, x, y, speed int32) {
+func (g *Gopher) Setup(renderer *sdl.Renderer, x, y, speed float64) {
 
 	//set texture
 	g.tex = loadImgTool.TextureFromBMP(renderer, "sprites/run.bmp")
@@ -71,17 +64,17 @@ func (g *Gopher) limitAcl() {
 //update position, etc
 func (g *Gopher) Update(keyboardState []uint8) {
 	//update accel based on keyboard state
-	if keyboardState[SCAN_H] == 1 {
-		g.acl[0] -= 1
+	if keyboardState[sdl.SCANCODE_H] == 1 {
+		g.acl[0] -= 0.01
 	}
-	if keyboardState[SCAN_J] == 1 {
-		g.acl[1] -= 1
+	if keyboardState[sdl.SCANCODE_J] == 1 {
+		g.acl[1] += 0.01
 	}
-	if keyboardState[SCAN_K] == 1 {
-		g.acl[1] += 1
+	if keyboardState[sdl.SCANCODE_K] == 1 {
+		g.acl[1] -= 0.01
 	}
-	if keyboardState[SCAN_L] == 1 {
-		g.acl[0] += 1
+	if keyboardState[sdl.SCANCODE_L] == 1 {
+		g.acl[0] += 0.01
 	}
 
 	//limit max acceleration

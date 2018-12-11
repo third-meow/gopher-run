@@ -37,7 +37,7 @@ func errCheck(err error) {
 func setupEntitys() {
 
 	player = &gopher.Gopher{}
-	player.Setup(renderer, (SCREEN_WIDTH / 2), (SCREEN_HEIGHT / 2), 3)
+	player.Setup(renderer, (SCREEN_WIDTH / 2), (SCREEN_HEIGHT / 2), 0.3)
 	//enemies = make([]possessed.PossessedGopher, ENEMY_N)
 	//blocks= make([]block.Block, BLOCK_N)
 
