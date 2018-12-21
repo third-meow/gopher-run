@@ -2,6 +2,7 @@ package gopher
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
+	"gopher-run/collision"
 	"gopher-run/loadImgTool"
 )
 
@@ -13,11 +14,12 @@ func apply(a, b *[2]float64) {
 }
 
 type Gopher struct {
-	pos, acl         [2]float64
-	speed            float64
-	height, width    int32
-	srcRect, posRect *sdl.Rect
-	tex              *sdl.Texture
+	pos, acl            [2]float64
+	speed               float64
+	imgHeight, imgWidth int
+	Height, Width       int
+	srcRect, posRect    *sdl.Rect
+	tex                 *sdl.Texture
 }
 
 //setup gopher
@@ -26,12 +28,14 @@ func (g *Gopher) Setup(renderer *sdl.Renderer, x, y, speed float64) {
 	//set texture
 	g.tex = loadImgTool.TextureFromBMP(renderer, "sprites/run.bmp")
 
-	//set height and width
-	g.height = 180
-	g.width = 194
+	//set Height and Width
+	g.imgHeight = 180
+	g.Height = g.imgHeight / 2
+	g.imgWidth = 194
+	g.Width = g.imgWidth / 2
 
 	//set source rect
-	g.srcRect = &sdl.Rect{X: 0, Y: 0, W: g.width, H: g.height}
+	g.srcRect = &sdl.Rect{X: 0, Y: 0, W: int32(g.imgWidth), H: int32(g.imgHeight)}
 
 	g.pos[0] = x
 	g.pos[1] = y
@@ -43,8 +47,7 @@ func (g *Gopher) Setup(renderer *sdl.Renderer, x, y, speed float64) {
 
 //update position rectagle
 func (g *Gopher) updatePosRect() {
-	//						scale down by 0.5x     vvvv           vvvv
-	g.posRect = &sdl.Rect{X: int32(g.pos[0]), Y: int32(g.pos[1]), W: g.width / 2, H: g.height / 2}
+	g.posRect = &sdl.Rect{X: int32(g.pos[0]), Y: int32(g.pos[1]), W: int32(g.Width), H: int32(g.Height)}
 }
 
 //limit acceleration
@@ -63,23 +66,31 @@ func (g *Gopher) limitAcl() {
 }
 
 //update position, etc
-func (g *Gopher) Update(keyboardState []uint8) {
+func (g *Gopher) Update(keyboardState *[]uint8, col *collision.Collision) {
 
 	g.acl[0] *= 0.97
 	g.acl[1] *= 0.97
 
 	//update accel based on keyboard state
-	if (keyboardState[sdl.SCANCODE_H] == 1) || (keyboardState[sdl.SCANCODE_A] == 1) {
-		g.acl[0] -= 0.01
+	if ((*keyboardState)[sdl.SCANCODE_H] == 1) || ((*keyboardState)[sdl.SCANCODE_A] == 1) {
+		if (*col).Left == 0 {
+			g.acl[0] -= 0.01
+		}
 	}
-	if (keyboardState[sdl.SCANCODE_J] == 1) || (keyboardState[sdl.SCANCODE_S] == 1) {
-		g.acl[1] += 0.01
+	if ((*keyboardState)[sdl.SCANCODE_J] == 1) || ((*keyboardState)[sdl.SCANCODE_S] == 1) {
+		if (*col).Bottom == 0 {
+			g.acl[1] += 0.01
+		}
 	}
-	if (keyboardState[sdl.SCANCODE_K] == 1) || (keyboardState[sdl.SCANCODE_W] == 1) {
-		g.acl[1] -= 0.01
+	if ((*keyboardState)[sdl.SCANCODE_K] == 1) || ((*keyboardState)[sdl.SCANCODE_W] == 1) {
+		if (*col).Top == 0 {
+			g.acl[1] -= 0.01
+		}
 	}
-	if (keyboardState[sdl.SCANCODE_L] == 1) || (keyboardState[sdl.SCANCODE_D] == 1) {
-		g.acl[0] += 0.01
+	if ((*keyboardState)[sdl.SCANCODE_L] == 1) || ((*keyboardState)[sdl.SCANCODE_D] == 1) {
+		if (*col).Right == 0 {
+			g.acl[0] += 0.01
+		}
 	}
 
 	//limit max acceleration
@@ -95,4 +106,14 @@ func (g *Gopher) Update(keyboardState []uint8) {
 //return data for renderer to draw
 func (g *Gopher) GetDrawData() (*sdl.Texture, *sdl.Rect, *sdl.Rect) {
 	return g.tex, g.srcRect, g.posRect
+}
+
+//return x pos
+func (g *Gopher) GetX() int {
+	return int(g.pos[0])
+}
+
+//return y pos
+func (g *Gopher) GetY() int {
+	return int(g.pos[1])
 }

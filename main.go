@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
+	"gopher-run/collision"
 	//"gopher-run/block"
 	"gopher-run/gopher"
 	//"gopher-run/possessed"
@@ -44,7 +45,25 @@ func setupEntitys() {
 }
 
 func updateAll() {
-	player.Update(sdl.GetKeyboardState())
+
+	//check for player collisions
+	playerCol := collision.Collision{}
+	if player.GetX() <= 0 {
+		playerCol.Left = 1
+	} else if player.GetX() >= (SCREEN_WIDTH - (player.Width / 2)) {
+		playerCol.Right = 1
+	}
+
+	if player.GetY() <= 0 {
+		playerCol.Top = 1
+	} else if player.GetY() >= (SCREEN_HEIGHT - (player.Height / 2)) {
+		playerCol.Bottom = 1
+	}
+
+	//update player
+	keyState := sdl.GetKeyboardState()
+	player.Update(&keyState, &playerCol)
+
 }
 
 //draws everything
