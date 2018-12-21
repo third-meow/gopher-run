@@ -64,17 +64,21 @@ func (g *Gopher) limitAcl() {
 
 //update position, etc
 func (g *Gopher) Update(keyboardState []uint8) {
+
+	g.acl[0] *= 0.97
+	g.acl[1] *= 0.97
+
 	//update accel based on keyboard state
-	if keyboardState[sdl.SCANCODE_H] == 1 {
+	if (keyboardState[sdl.SCANCODE_H] == 1) || (keyboardState[sdl.SCANCODE_A] == 1) {
 		g.acl[0] -= 0.01
 	}
-	if keyboardState[sdl.SCANCODE_J] == 1 {
+	if (keyboardState[sdl.SCANCODE_J] == 1) || (keyboardState[sdl.SCANCODE_S] == 1) {
 		g.acl[1] += 0.01
 	}
-	if keyboardState[sdl.SCANCODE_K] == 1 {
+	if (keyboardState[sdl.SCANCODE_K] == 1) || (keyboardState[sdl.SCANCODE_W] == 1) {
 		g.acl[1] -= 0.01
 	}
-	if keyboardState[sdl.SCANCODE_L] == 1 {
+	if (keyboardState[sdl.SCANCODE_L] == 1) || (keyboardState[sdl.SCANCODE_D] == 1) {
 		g.acl[0] += 0.01
 	}
 
