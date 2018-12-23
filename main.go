@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
+	"gopher-run/block"
 	"gopher-run/collision"
-	//"gopher-run/block"
 	"gopher-run/gopher"
 	//"gopher-run/possessed"
 )
@@ -15,7 +15,7 @@ const (
 	SCREEN_WIDTH        = 720
 
 	ENEMY_N = 5
-	BLOCK_N = 9
+	BLOCK_N = 1
 )
 
 //sdl renderer and window
@@ -26,7 +26,7 @@ var window *sdl.Window
 var player *gopher.Gopher
 
 //var enemies []*possessed.PossessedGopher
-//var blocks []*block.Block
+var blocks []*block.Block
 
 //checks and handles errors
 func errCheck(err error) {
@@ -40,7 +40,11 @@ func setupEntitys() {
 	player = &gopher.Gopher{}
 	player.Setup(renderer, (SCREEN_WIDTH / 2), (SCREEN_HEIGHT / 2), 0.3)
 	//enemies = make([]possessed.PossessedGopher, ENEMY_N)
-	//blocks= make([]block.Block, BLOCK_N)
+	blocks = make([]*block.Block, BLOCK_N)
+	for i, b := range blocks {
+		b = &block.Block{}
+		b.Setup(renderer, 300+(i*50), 300+(i*50))
+	}
 
 }
 
@@ -74,6 +78,11 @@ func drawAll() {
 
 	//draw player
 	renderer.Copy(player.GetDrawData())
+
+	//draw blocks
+	for _, b := range blocks {
+		renderer.Copy(b.GetDrawData())
+	}
 
 	//present changes
 	renderer.Present()
