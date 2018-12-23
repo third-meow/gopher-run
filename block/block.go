@@ -1,4 +1,4 @@
-package gopher
+package block
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
@@ -28,11 +28,12 @@ func (b *Block) Setup(renderer *sdl.Renderer, x, y int) {
 	//set source rect
 	b.srcRect = &sdl.Rect{X: 0, Y: 0, W: int32(b.imgWidth), H: int32(b.imgHeight)}
 
-	b.pos[0] = x
-	b.pos[1] = y
+	b.pos[0] = float64(x)
+	b.pos[1] = float64(y)
 
 	//update position rect
 	b.updatePosRect()
+
 }
 
 //update position rectagle
